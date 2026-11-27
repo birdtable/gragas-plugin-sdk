@@ -1,8 +1,10 @@
 <p align="center">
-    <img width="72" alt="" src="docs/gragas-plugin-sdk.svg" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/mark/gragas-plugin-sdk-banner-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="docs/mark/gragas-plugin-sdk-banner-light.svg">
+    <img src="docs/mark/gragas-plugin-sdk-banner-light.svg" width="485" alt="gragas-plugin-sdk: the gragas feather with a plug in braces, then a coral bird in flight and the name">
+  </picture>
 </p>
-
-# gragas-plugin-sdk
 
 The Go SDK that [gragas](https://github.com/birdtable/gragas) plugins are written with.
 
