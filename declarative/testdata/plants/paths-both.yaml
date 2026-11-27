@@ -1,0 +1,46 @@
+format: 3
+tool: lint-a
+version: 1.0.0
+tool_versions: ">=2.1.0 <3.0.0"
+targets: [source, config]
+extends: true
+config:
+  - target: source
+    argv: [print-config, "{fixtures}"]
+    format: json
+    entries:
+      each: /rules
+      options: /1
+      severity: /0
+run:
+  argv: [run, --config, "{config}", --out, "{output}", "{fixtures}"]
+  output:
+    format: json
+    each: /issues
+    fields:
+      key: /rule
+      path: /file
+      line: /line
+severities:
+  form: level
+  levels:
+    - name: error
+      is: error
+    - name: warn
+      is: warning
+  warning: warn
+docs_url:
+  option: docs-base
+resolve_from: node_modules
+paths:
+  - ecosystem: node
+    path: node_modules/.bin/lint-a
+    package: lint-a
+version_argv: [--version]
+preset:
+  path: lint-a.yml
+  format: yaml
+  comment: hash
+  placement:
+    shape: list
+    each: /rules

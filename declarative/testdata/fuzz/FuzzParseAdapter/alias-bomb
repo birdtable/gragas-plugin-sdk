@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("a0: &a0 [x, x, x, x, x, x, x, x, x, x]\na1: &a1 [*a0, *a0, *a0, *a0, *a0, *a0, *a0, *a0, *a0, *a0]\na2: &a2 [*a1, *a1, *a1, *a1, *a1, *a1, *a1, *a1, *a1, *a1]\na3: [*a2, *a2, *a2, *a2, *a2, *a2, *a2, *a2, *a2, *a2]\npreset:\n  path: lint-a.yml\n  format: yaml\n  comment: hash\n  placement:\n    shape: list\n    each: /rules\n")

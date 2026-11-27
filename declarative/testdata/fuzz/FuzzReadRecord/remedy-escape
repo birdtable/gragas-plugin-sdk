@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("subject: std.errors.1\ntool: lint-a\ntarget: source\nkey: wrapcheck\nvalue: true\noptions:\n  ignore: [fmt]\nseverity: error\nrung: 1\nrun_point: commit\nremedy: \"\\e[31mwrap\"\n")

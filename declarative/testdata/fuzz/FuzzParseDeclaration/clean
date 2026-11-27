@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("format: 3\nname: own-plugin\ntool: lint-a\npublisher: alex\ntests: testdata\nlicence: Apache-2.0\n")

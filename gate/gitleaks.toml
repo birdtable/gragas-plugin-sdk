@@ -1,0 +1,9 @@
+# The secret scan's config. Every gitleaks call of the Taskfile names it by absolute path
+# ({{.ROOT_DIR}}/gate/gitleaks.toml), so the tree a scan reads, which at landing is the pull request's squash,
+# never supplies a config: gitleaks reads <source>/.gitleaks.toml only when it is given none. A .gitleaks.toml or
+# a .gitleaksignore anywhere in the tree turns the members red (gate/secrets-refuse.sh). The file is gate's.
+# There is no allow-list: the SDK holds no recorded linter names.
+title = "gragas-plugin-sdk"
+
+[extend]
+useDefault = true

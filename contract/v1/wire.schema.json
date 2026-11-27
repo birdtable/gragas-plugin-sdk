@@ -1,0 +1,141 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "contract/plugin/v1/wire.schema.json",
+ "$defs": {
+  "key":      {"type": "string", "minLength": 1, "maxLength": 512},
+  "path":     {"type": "string", "minLength": 1, "maxLength": 4096},
+  "version":  {"type": "string", "maxLength": 256, "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+  "target":   {"enum": ["source","config","migration","container","workflow","iac","api-spec","prose","commit","telemetry-registry","dependency","package"]},
+  "severity": {"enum": ["error","warning","info"]},
+  "level":    {"enum": ["isolated","sandboxed"]},
+  "value":    {},
+  "bytes":    {"type": "object", "additionalProperties": false,
+               "oneOf": [{"required": ["text"]}, {"required": ["base64"]}],
+               "properties": {"text": {"type": "string"}, "base64": {"type": "string"}}},
+  "file":     {"type": "object", "additionalProperties": false, "required": ["path","data"],
+               "properties": {"path": {"$ref": "#/$defs/path"}, "data": {"$ref": "#/$defs/bytes"}}},
+  "config":   {"type": "object", "required": ["path"],
+               "properties": {"path": {"$ref": "#/$defs/path"}, "data": {"$ref": "#/$defs/bytes"}}},
+  "run":      {"type": "object", "additionalProperties": false, "required": ["kind","program","argv"],
+               "properties": {
+                "kind":    {"const": "run"},
+                "program": {"type": "string", "minLength": 1, "maxLength": 64},
+                "argv":    {"type": "array", "maxItems": 256, "items": {"type": "string", "maxLength": 4096}},
+                "stdin":   {"$ref": "#/$defs/bytes"},
+                "place":   {"type": "array", "maxItems": 16, "items": {"$ref": "#/$defs/file"}},
+                "collect": {"type": "array", "maxItems": 16, "items": {"$ref": "#/$defs/path"}},
+                "level":   {"$ref": "#/$defs/level"}}},
+  "read":     {"type": "object", "additionalProperties": false, "required": ["kind","glob"],
+               "properties": {"kind": {"const": "read"}, "glob": {"type": "string", "minLength": 1, "maxLength": 1024}}},
+  "result":   {"type": "object", "required": ["round","step","kind","files"],
+               "properties": {
+                "round":  {"type": "integer", "minimum": 0, "maximum": 2},
+                "step":   {"type": "integer", "minimum": 0, "maximum": 15},
+                "kind":   {"enum": ["run","read"]},
+                "exit":   {"type": "integer"},
+                "stdout": {"$ref": "#/$defs/bytes"},
+                "stderr": {"$ref": "#/$defs/bytes"},
+                "cut":    {"type": "boolean"},
+                "files":  {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/file"}}},
+               "if": {"properties": {"kind": {"const": "run"}}},
+               "then": {"required": ["exit","stdout","stderr","cut"]}},
+  "gathered": {"type": "object", "required": ["tool_version","config","have"],
+               "properties": {
+                "tool_version": {"$ref": "#/$defs/version"},
+                "scratch": {"type": "string", "maxLength": 4096},
+                "config":  {"type": "array", "maxItems": 64, "items": {"$ref": "#/$defs/config"}},
+                "have":    {"type": "array", "maxItems": 48, "items": {"$ref": "#/$defs/result"}}}},
+
+  "plan.request":  {"allOf": [{"$ref": "#/$defs/gathered"}], "required": ["for","target","round"],
+               "properties": {
+                "for":      {"enum": ["config","run"]},
+                "target":   {"$ref": "#/$defs/target"},
+                "round":    {"type": "integer", "minimum": 0, "maximum": 2},
+                "fixtures": {"type": "array", "maxItems": 1024, "items": {"$ref": "#/$defs/path"}}}},
+  "plan.response": {"type": "object", "additionalProperties": false, "required": ["steps","final"],
+               "properties": {
+                "steps": {"type": "array", "maxItems": 16,
+                          "items": {"oneOf": [{"$ref": "#/$defs/run"}, {"$ref": "#/$defs/read"}]}},
+                "final": {"type": "boolean"}}},
+
+  "entries.request":  {"allOf": [{"$ref": "#/$defs/gathered"}], "required": ["target"],
+               "properties": {"target": {"$ref": "#/$defs/target"}}},
+  "entries.response": {"type": "object", "additionalProperties": false, "required": ["entries"],
+               "properties": {"entries": {"type": "array", "maxItems": 100000, "items": {
+                "type": "object", "additionalProperties": false, "required": ["key","on"],
+                "properties": {
+                 "key":      {"$ref": "#/$defs/key"},
+                 "on":       {"type": "boolean"},
+                 "severity": {"$ref": "#/$defs/severity"},
+                 "value":    {"$ref": "#/$defs/value"},
+                 "options":  {"$ref": "#/$defs/value"}}}}}},
+
+  "findings.request":  {"allOf": [{"$ref": "#/$defs/gathered"}], "required": ["fixtures"],
+               "properties": {"fixtures": {"type": "array", "maxItems": 1024, "items": {"$ref": "#/$defs/path"}}}},
+  "findings.response": {"type": "object", "additionalProperties": false, "required": ["ran","findings"],
+               "properties": {
+                "ran": {"type": "boolean"},
+                "why": {"type": "string", "maxLength": 2048},
+                "findings": {"type": "array", "maxItems": 100000, "items": {
+                 "type": "object", "additionalProperties": false, "required": ["key","message"],
+                 "properties": {
+                  "key":      {"$ref": "#/$defs/key"},
+                  "message":  {"type": "string", "maxLength": 8192},
+                  "path":     {"$ref": "#/$defs/path"},
+                  "line":     {"type": "integer", "minimum": 1, "maximum": 4294967295},
+                  "column":   {"type": "integer", "minimum": 1, "maximum": 4294967295},
+                  "severity": {"$ref": "#/$defs/severity"},
+                  "url":      {"type": "string", "maxLength": 2048}}}}}},
+
+  "rank.request":  {"type": "object", "required": ["tool_version","pairs"],
+               "properties": {
+                "tool_version": {"$ref": "#/$defs/version"},
+                "pairs": {"type": "array", "minItems": 1, "maxItems": 10000, "items": {
+                 "type": "object", "required": ["key","aspect","preset","found"],
+                 "properties": {
+                  "key":    {"$ref": "#/$defs/key"},
+                  "aspect": {"enum": ["value","options"]},
+                  "preset": {"$ref": "#/$defs/value"},
+                  "found":  {"$ref": "#/$defs/value"}}}}}},
+  "rank.response": {"type": "object", "additionalProperties": false, "required": ["words"],
+               "properties": {"words": {"type": "array", "maxItems": 10000,
+                "items": {"enum": ["tighter","weaker","same","unknown"]}}}},
+
+  "preset.request":  {"type": "object", "required": ["tool_version","entries","inputs"],
+               "properties": {
+                "tool_version": {"$ref": "#/$defs/version"},
+                "mark":   {"type": "string", "maxLength": 256},
+                "inputs": {"type": "array", "maxItems": 16, "items": {"$ref": "#/$defs/file"}},
+                "entries": {"type": "array", "maxItems": 100000, "items": {
+                 "type": "object", "required": ["key","target","trial","rules"],
+                 "properties": {
+                  "key":      {"$ref": "#/$defs/key"},
+                  "target":   {"$ref": "#/$defs/target"},
+                  "severity": {"$ref": "#/$defs/severity"},
+                  "value":    {"$ref": "#/$defs/value"},
+                  "options":  {"$ref": "#/$defs/value"},
+                  "trial":    {"type": "boolean"},
+                  "rules":    {"type": "array", "minItems": 1, "maxItems": 4096, "items": {"type": "string", "maxLength": 128}}}}}}},
+  "preset.response": {"type": "object", "additionalProperties": false, "required": ["files"],
+               "properties": {
+                "files": {"type": "array", "minItems": 1, "maxItems": 10000, "items": {
+                 "type": "object", "additionalProperties": false, "required": ["path","text"],
+                 "properties": {"path": {"$ref": "#/$defs/path"}, "text": {"type": "string"}}}},
+                "notes": {"type": "array", "maxItems": 100, "items": {"type": "string", "maxLength": 1024}}}},
+
+  "error":    {"type": "object", "additionalProperties": false, "required": ["code","message"],
+               "properties": {
+                "code":    {"enum": ["unsupported","unreadable","refused","bug"]},
+                "message": {"type": "string", "minLength": 1, "maxLength": 2048},
+                "path":    {"type": "string", "maxLength": 1024}}},
+  "request":  {"type": "object", "required": ["contract","features","op","body"],
+               "properties": {
+                "contract": {"const": 1},
+                "features": {"type": "array", "maxItems": 4096, "items": {"type": "string"}},
+                "op":       {"enum": ["plan","entries","findings","rank","preset"]},
+                "body":     {"type": "object"}}},
+  "response": {"type": "object", "additionalProperties": false,
+               "oneOf": [{"required": ["ok"]}, {"required": ["error"]}],
+               "properties": {"ok": {"type": "object"}, "error": {"$ref": "#/$defs/error"}}}
+ }
+}

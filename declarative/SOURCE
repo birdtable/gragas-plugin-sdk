@@ -1,0 +1,73 @@
+gragas e9878a58a20c872a357f01c0eb97cd263dc2dd8f (release-1), re-synced from 9ff44ec61c7f3fd11c0cabd372c55ffc04aad086 (release-1), which was the first copy.
+
+Copied from birdtable/gragas at that commit, so a re-sync is a diff from it. The re-sync was a three-way merge: the first copy as the base, the files of
+e9878a58a as theirs (each with only the edits of the first item below), and the working copies as ours, so every edit below was kept; it merged with no conflict:
+
+  internal/core/link/{link,read,decode,shape,table,generate,generate_settings,override,preset,version,files}.go     ->  ./
+  internal/core/link/{link_test,override_test,read_test,read_guards_test,export_test,files_test}.go                  ->  ./
+  internal/testdata/format-v3/adapter.{valid,invalid}.json (the adapter schema's examples, read by link_test.go)  ->  ./testdata/format-v3/
+  internal/core/link/testdata/                                                                                      ->  ./testdata/
+  internal/model/{adapter,book,conflicts,entities,history,identity,observation,observed,result,rule,seam,standing,structure,validation,word}.go  ->  ./internal/model/
+  internal/ordered/*.go (8 files, no tests)                                                                         ->  ./internal/ordered/
+  internal/canon/{decode,encode,errors,order,value}.go                                                              ->  ./internal/canon/
+  internal/rendered/splice.go                                                                                       ->  ./internal/rendered/
+  internal/port/port.go: the interface Schema alone                                                                 ->  ./internal/port/port.go
+
+Copied at the first commit and NOT re-synced (kept as the first copy): observe.go and observe_test.go. At e9878a58a Observe takes a plugin's entries and imports gragas's
+model/plugin, which is the engine's side of the reading; the declarative plugin never calls Observe, and uses only its helpers (scaleOf, off, stable, valueRank, sign) and its
+tests. They go with gragas's own Observe when it leaves the adapter reader; until then they stay at 9ff44ec61.
+
+The edits, all of them (each one is kept by a re-sync; a re-sync that loses one has lost it):
+  1. every file: the import paths (github.com/birdtable/gragas/internal/X -> .../declarative/internal/X) and the package clause (link -> declarative; link_test -> declarative_test); in the tests,
+     the qualifier link. -> declarative.
+  2. observe_test.go: the two paths by which it reads model/observation.go and the model files (../../model/ -> internal/model/).
+  3. link_test.go: the fake Schema world of gragas (porttest, a compiled adapter schema) is gone. helpers_test.go holds stubSchema, whose Check finds
+     no problem, and schema(t), read(t, path) verbatim, and a TestMain that runs the tests as they are (gragas's configtest.Main isolated the
+     environment of a program that reads files and runs tools). FuzzParseAdapter reads with stubSchema{}. examples is testdata/format-v3/.
+  4. link_test.go: the test named under "Stays in gragas" below, deleted.
+  5. generate.go, generate_settings.go: the request's mark is a parameter, not a replace in the output: the struct Generated gains a field Mark; render takes the asked
+     mark as a fourth parameter and writes it in place of gragas's own when it is not empty; generateTool passes out.Mark at its two calls of render; generateSettings writes out.Mark in place of
+     markGenerated when it is not empty. About ten lines; gragas's own callers would pass "".
+  6. read.go: the 32-bit vet is over every module, declarative included: `i < 1<<31` in number and `i >= 1<<31` in whole, which compared an int with a constant that
+     a 32-bit int cannot hold, are `i <= math.MaxInt32` and `i > math.MaxInt32` (the same range on 64 bits; import "math" added).
+  7. observe_test.go: `rng(seed * 2654435761)` is `rng(uint64(seed) * 2654435761)` (the same seeds on 64 bits). read_32bit_test.go is new: the row of the edge of an int32.
+  8. A re-sync by diff from gragas keeps each of these, or the unquoted off is refused again:
+       internal/model/adapter.go: the constant ConfigYAML12 = "yaml-1.2", and ConfigFormats() lists it beside json and yaml.
+       internal/ordered/yaml.go: the converter gains the field core12; convert's ScalarNode case returns resolve12(n.Value) for an untagged plain scalar when core12 is set (a quoted, literal, folded or "!"-tagged one goes on to scalar(n)).
+       internal/ordered/strict.go: ParseStrict12, ParseStrict with converter{core12: true}; its refusals are ParseStrict's.
+       read.go: configDocument's switch gains the case model.ConfigYAML12, read by ordered.ParseStrict12, with no apart() refusal; "yaml" keeps it.
+       read_test.go: two rows added at the end, TestAPlainScalarTheTwoYAMLsReadApartIsRefusedWhereTheToolsVersionIsNotNamed (gragas's refusal in link/read.go, ported) and TestAnUnquotedOffReadsAsOffWhereTheToolReadsYAML12.
+       Not made here: a name for yaml-1.2 in gragas's own adapter files or its ConfigFormats(), and format-v3's enum, which the adapter follow-up needs first.
+  9. files.go: ReadFileEntries is a wrapper, with its signature and its results as they were, of the new readFileEntries, which gives each entry file's entries typed (the type typedFile, whose
+     entries are readEntries' entry), so that a plugin answers a file's value and options as JSON and not as the text of a one-line form. Nothing else of the file changes.
+ 10. configfile.go is new: the type ConfigFile, defined in gragas's configs.go on the engine's side of the plan rounds, which does not move; the same two fields, Path and Data.
+ 11. The SDK only; gragas's internal/core/link has the same code and the same case fault, which moves or goes with that package, so it is not fixed twice:
+       internal/model/adapter.go: Placement gains OptionsTop (options_top), and EntryMap gains OptionsTop (options_top).
+       preset.go: placement reads options_top; optionsTopPlace refuses it on a list or an object, beside options or options_at, and under a key, value or severity pointer whose first step is digits.
+       decode.go: configs reads options_top in a config read's entries; optionsTopRead refuses it on a printed config's read, with an each that is not "", and beside options, also or as.
+       generate.go: entryDoc writes each option at the top of the entry's file by its name where the placement says options_top; topClash and add refuse an option named as the first step of the
+       key, value or severity pointer; add refuses a second key that is one file with an earlier one where case folds (toolDoc.folded), naming both rules and both keys; the note of two bindings of
+       one key that state it otherwise names the part (partOtherwise), "already sets the entry's options otherwise" for "already sets the entry otherwise".
+       read.go: entryOf reads an entry's options from the top of its file where the map says options_top (topOptions).
+       override.go: sameEntries compares OptionsTop (Placement is compared whole, so it holds options_top already).
+       options_top_test.go is new: its rows.
+       Not made here: options_top in format-v3's adapter schema (gragas's host/assets/format/schema/v3/adapter.schema.json), which the adapter files' schema check needs before an adapter names it.
+
+Stays in gragas until the plugins repository's gate holds the schema check, because it needs a real schema refusal; the stub's "valid" must pass nothing that asserted one:
+  TestADocumentTheSchemaRefusesIsRefusedAtItsYAMLLine  (link_test.go: plants a problem in the fake world and reads the refusal at its YAML line,
+    and reads with no schema compiled)
+  TestThePointerClassIsOneDefinition  (pointer_class_test.go: holds the reader's pointer class equal to the patterns of host/assets/format/schema/v3/adapter.schema.json, which this module does not hold)
+The schema check of the adapter files is the plugins repository's gate, where the files live.
+
+Not carried:
+  The tests of link files that were not copied (derive, checkers, conflicts, coverage, resolve, record, explain, loosens, keys, leaves, onoff, borrowed).
+  internal/ordered's and internal/canon's own tests.
+override.go is copied because table.go still calls it, and goes with the first edit of table.go.
+
+Dependencies: go.yaml.in/yaml/v3 v3.0.6 (internal/ordered) and golang.org/x/mod v0.42.0 (version.go, semver), the versions gragas pins.
+
+New here, not copied from gragas: entries.go (the step from a wire preset request to the candidates the moved writer takes, and Plugin, New and Preset), plan.go (Plan: the adapter argv in the wire words, and for a config read of files the call of the rounds), rounds.go (the plan rounds for a config read of files, and its Entries), configfile.go, rank.go (Rank, conformance depth), entries_read.go (Entries and Findings: the moved reader's typed entries and diagnostics as the wire's),
+entries_test.go, entries_internal_test.go, rounds_test.go and read_32bit_test.go (their rows), testdata/adapters/{ast-grep/1.1.0,eslint/1.1.0,golangci-lint/1.0.0,tsc/1.1.0}.yaml (the four adapters release-1 ships, internal/host/assets/adapters/, verbatim, read by TestTheFourShippedAdaptersReadAsTheyDidThroughLink), testdata/bridge/plain.yaml (testdata/clean.yaml without its settings input), and helpers_test.go.
+All five operations are provided.
+entries.go no longer replaces the mark in the output; it sets Generated.Mark.
+The declarative package has no go.mod of its own: it is one module with the rest of the SDK, and its two requirements (go.yaml.in/yaml/v3 v3.0.6, golang.org/x/mod v0.42.0) are in the root go.mod.

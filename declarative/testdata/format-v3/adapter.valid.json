@@ -1,0 +1,86 @@
+[
+  {
+    "format": 3,
+    "tool": "lint-a",
+    "version": "1.0.0",
+    "tool_versions": ">=2.1.0 <3.0.0",
+    "targets": ["source", "config", "migration", "container", "workflow", "iac", "api-spec", "prose", "commit", "telemetry-registry", "dependency", "package"],
+    "extends": true,
+    "config": [
+      {"target": "source", "argv": ["print-config", "{fixtures}", "--config", "{config}"], "format": "json",
+        "entries": {"each": "/rules", "value": "", "options": "/1", "severity": "/0"}},
+      {"target": "config", "argv": ["config", "show", "{config}"], "format": "yaml",
+        "entries": {"each": "/linters/list", "key": "/name", "value": "/enabled", "options": "/settings", "severity": "/level"}},
+      {"target": "migration", "argv": ["linters", "--json"], "format": "json",
+        "entries": {"each": "/Enabled", "key": "/name", "as": "true", "also": [{"each": "/Disabled", "key": "/name", "as": "false"}]}},
+      {"target": "container", "files": {"config": "lint.yaml", "dirs": "/ruleDirs", "ext": [".yml", ".yaml"]}, "format": "yaml",
+        "entries": {"each": "", "key": "/id", "value": "/rule", "severity": "/severity"}}
+    ],
+    "config_loads_code": false,
+    "run": {
+      "argv": ["run", "--config", "{config}", "--out", "{output}", "{fixtures}"],
+      "output": {"format": "json", "each": "/issues",
+        "fields": {"key": "/rule", "message": "/text", "path": "/file", "line": "/pos/line", "column": "/pos/col", "severity": "/level", "url": "/docs"}}
+    },
+    "version_argv": ["--version"],
+    "severities": {"form": "level", "levels": [{"name": "error", "is": "error"}, {"name": "warn", "is": "warning"}, {"name": "note", "is": "info"}], "warning": "warn", "default": "note", "off_words": ["off"]},
+    "values": {"off_values": [false, "off"], "order": [true, "loose", "strict", 2], "keys": [{"key": "skipLibCheck", "order": [true, false]}, {"key": "level", "off_values": ["off"], "order": ["warn", "error"]}]},
+    "docs_url": {"option": "docs-base"},
+    "preset": {"path": "lint-a.config.js", "format": "js", "comment": "block",
+      "placement": {"shape": "object", "each": "/rules", "key": "/name", "value": "/0", "options": "/1", "severity": "/0"},
+      "wiring": {"import": {"at": "/extends", "form": "list"}, "install": ["npm", "install", "--save-dev", "lint-a@latest", "@lint-a/js@latest"]}},
+    "resolve_from": "node_modules",
+    "paths": [
+      {"ecosystem": "node", "package": "lint-a", "bin": "lint-a"},
+      {"ecosystem": "go", "path": "bin/lint-a"},
+      {"ecosystem": "python", "path": ".venv/bin/lint-a"}
+    ]
+  },
+  {
+    "format": 3,
+    "tool": "lint-b",
+    "version": "0.3.1",
+    "tool_versions": "=4.2.0",
+    "targets": ["prose"],
+    "extends": false,
+    "run": {
+      "argv": ["check", "{fixtures}"],
+      "output": {"format": "lines", "pattern": "^(?P<path>[^:]+):(?P<line>[0-9]+): (?P<key>[a-z-]+) (?P<message>.*)$", "only_form": true, "ran_codes": [0, 1], "error_keys": ["parse-error"]}
+    },
+    "version_argv": ["--version"],
+    "severities": {"form": "table", "levels": [{"name": "fail", "is": "error"}]},
+    "preset": {"path": "lint-b/config.json", "format": "jsonc", "comment": "slash",
+      "placement": {"shape": "files", "dir": "rules", "key": "/id", "value": "/rule"},
+      "wiring": {"import": {"at": "/extends", "form": "string"}}}
+  },
+  {
+    "format": 3,
+    "tool": "lint-c",
+    "version": "2.0.0",
+    "tool_versions": ">=1.0.0",
+    "targets": ["source"],
+    "extends": true,
+    "run": {"argv": ["scan", "--sarif", "{fixtures}"], "output": {"format": "sarif"}},
+    "version_argv": ["--version"],
+    "severities": {"form": "level", "levels": [{"name": "error", "is": "error"}, {"name": "warning", "is": "warning"}], "warning": "warning"},
+    "preset": {"path": ".lint-c.yml", "format": "yaml", "comment": "hash",
+      "lines": [{"key": "version", "value": "2"}, {"key": "ruleDirs", "items": ["rules"]}],
+      "settings": {"file": "settings.yml", "begin": "# lint-c:begin", "end": "# lint-c:end"},
+      "placement": {"shape": "list", "each": "/enable", "severity_table": "/severity/rules",
+        "severity_item": {"shape": "list", "key": "/linters", "key_form": "list", "level": "/severity"}},
+      "wiring": {"install": ["go", "install", "example.org/lint-c@v2.0.0"]}}
+  },
+  {
+    "format": 3,
+    "tool": "lint-d",
+    "version": "1.0.0",
+    "tool_versions": ">=1.0.0",
+    "targets": ["source"],
+    "extends": false,
+    "run": {"argv": ["scan", "--sarif", "{fixtures}"], "output": {"format": "sarif"}},
+    "version_argv": ["--version"],
+    "severities": {"form": "level", "levels": [{"name": "error", "is": "error"}, {"name": "warning", "is": "warning"}], "warning": "warning"},
+    "preset": {"path": ".lint-d.yml", "format": "yaml", "comment": "hash",
+      "placement": {"shape": "list", "each": "/linters/enable", "options_at": "/linters/settings/{key}"}}
+  }
+]

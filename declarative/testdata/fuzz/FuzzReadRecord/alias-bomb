@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("subject: &a std.errors.1\ntool: &b [*a, *a, *a]\ntarget: [*b, *b, *b]\n")

@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("subject: std.errors.1\ntool: a\ntarget: source\nkey: k\nseverity: info\nrung: 0\nrun_point: edit\n")

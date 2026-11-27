@@ -1,0 +1,165 @@
+conditional-nested.yaml
+  adapters/lint-a/1.0.0.yaml:26: conditional: severities.if is a conditional, and an adapter states one value for every case; write it without if
+conditional.yaml
+  adapters/lint-a/1.0.0.yaml:7: conditional: when is a conditional, and an adapter states one value for every case; write it without when
+config-argv-and-files.yaml
+  adapters/lint-a/1.0.0.yaml:10: shape: config[0] has argv and files, and a config read is one of them: a tool that prints its config is read by its print, never by its files
+config-files-code.yaml
+  adapters/lint-a/1.0.0.yaml:9: shape: config[0].files.config is "lint.config.js", and a project config read as data is JSON or YAML: a config that is code is read only by the tool's own print
+config-files-ending.yaml
+  adapters/lint-a/1.0.0.yaml:9: shape: config[0].files.ext[0] is "yaml", and an entry file read as data ends in one of .json, .yaml, .yml: a file that is code is read only by the tool's own print
+config-files-ext-code.yaml
+  adapters/lint-a/1.0.0.yaml:9: shape: config[0].files.ext[1] is ".js", and an entry file read as data ends in one of .json, .yaml, .yml: a file that is code is read only by the tool's own print
+config-files-outside.yaml
+  adapters/lint-a/1.0.0.yaml:9: shape: config[0].files.config is "../lint.yaml", and it must be a path below the config set: slash-separated, no step empty, . or .., no drive
+config-neither-argv-nor-files.yaml
+  adapters/lint-a/1.0.0.yaml:8: shape: config[0] has neither argv nor files, and a config read is one of them: argv runs the tool and reads its print, files reads the entry files its project config names
+control-in-an-argument.yaml
+  adapters/lint-a/1.0.0.yaml:16: shape: run.argv[3] holds a control character
+expression-in-a-literal.yaml
+  adapters/lint-a/1.0.0.yaml:16: expression: run.argv[1] is "--config={config}", which holds an expression's characters; an argument is a literal or a whole placeholder ({fixtures}, {config}, {output})
+expression-in-a-pointer.yaml
+  adapters/lint-a/1.0.0.yaml:12: expression: config[0].entries.each is "/rules/${HOME}", which holds an expression's characters; a pointer is a plain lookup
+expression-key.yaml
+  adapters/lint-a/1.0.0.yaml:7: expression: the key "{{ .tool }}" is written as an expression, and an adapter holds none
+expression.yaml
+  adapters/lint-a/1.0.0.yaml:16: expression: run.argv[2] is "$(cat ~/.token)", which holds an expression's characters; an argument is a literal or a whole placeholder ({fixtures}, {config}, {output})
+format-newer.yaml
+  adapters/lint-a/1.0.0.yaml:1: format: the document is format 4, newer than this engine's 3: it is left as it is, and a newer gragas reads it
+format-older.yaml
+  adapters/lint-a/1.0.0.yaml:1: format: the document is format 2, older than 3, and adapters began at format 3: write it in format 3
+output-fields-of-another-format.yaml
+  adapters/lint-a/1.0.0.yaml:19: output: run.output.each is not read for the format sarif
+  adapters/lint-a/1.0.0.yaml:20: output: run.output.fields is not read for the format sarif
+path-absolute.yaml
+  adapters/lint-a/1.0.0.yaml:37: shape: paths[0].path is "/usr/local/bin/lint-a", and it must be a path below the config set: slash-separated, no step empty, . or .., no drive
+path-climbs.yaml
+  adapters/lint-a/1.0.0.yaml:34: shape: resolve_from is "../shared", and it must be a path below the config set: slash-separated, no step empty, . or .., no drive
+paths-bin-key-with-a-path.yaml
+  adapters/lint-a/1.0.0.yaml:38: shape: paths[0] names a bin with no package, and a bin is the key of a package's bin map
+paths-both.yaml
+  adapters/lint-a/1.0.0.yaml:38: shape: paths[0] names both path and package, and an entry names one of the two
+paths-neither.yaml
+  adapters/lint-a/1.0.0.yaml:36: shape: paths[0] names neither path nor package, and an entry names one of the two
+paths-package-name-climbs.yaml
+  adapters/lint-a/1.0.0.yaml:37: shape: paths[0].package is "../lint-a", and it must be an npm package name, as npm writes it
+paths-package-outside-node.yaml
+  adapters/lint-a/1.0.0.yaml:37: shape: paths[0] names a package in the go ecosystem, and a package is a node one
+place.yaml
+  adapters/lint-a/1.0.0.yaml:2: place: the tool is lint-b, and the file stands in the folder lint-a
+placeholder-in-version-argv.yaml
+  adapters/lint-a/1.0.0.yaml:38: placeholder: version_argv[1] is {fixtures}, and this list takes no placeholder: it runs before any file is placed
+placeholder-no-fixtures.yaml
+  adapters/lint-a/1.0.0.yaml:16: placeholder: run.argv does not take {fixtures}, and a run is over fixtures
+placeholder-twice.yaml
+  adapters/lint-a/1.0.0.yaml:16: placeholder: run.argv[2] is {config}, which the list holds already
+preset-comment-the-format-cannot-hold.yaml
+  adapters/lint-a/1.0.0.yaml:42: shape: preset.comment is slash, which a yaml file cannot hold
+preset-comment-unknown.yaml
+  adapters/lint-a/1.0.0.yaml:42: shape: preset.comment is "semicolon", and it must be one of hash, slash, block
+preset-files-take-no-each.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.each is set, and files take dir
+preset-format-unknown.yaml
+  adapters/lint-a/1.0.0.yaml:41: shape: preset.format is "toml", and it must be one of yaml, jsonc, js
+preset-install-with-a-space.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.wiring.install[0] is 'lint-a install', and it must be one word of letters, digits and @ . _ / : , = + -
+preset-lines-empty-items.yaml
+  adapters/lint-a/1.0.0.yaml:45: shape: preset.lines[0].items is an empty list; leave it out or give it an item
+preset-lines-key-twice.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.lines[1].key is "version", which an earlier line already carries
+preset-lines-neither.yaml
+  adapters/lint-a/1.0.0.yaml:44: shape: preset.lines[0] holds exactly one of value and items, and it holds neither
+preset-lines-value-and-items.yaml
+  adapters/lint-a/1.0.0.yaml:44: shape: preset.lines[0] holds exactly one of value and items, and it holds both
+preset-lines-value-with-a-space.yaml
+  adapters/lint-a/1.0.0.yaml:45: shape: preset.lines[0].value is "a b", and it must be text of letters, digits and @ . _ / : + -
+preset-list-takes-no-dir.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.dir is set, and a list takes each
+preset-missing.yaml
+  adapters/lint-a/1.0.0.yaml:1: shape: preset is missing
+preset-options-at-above-the-severity-table.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.placement.options_at is "/severity/{key}", which is written where severity_table "/severity/rules" is, and one of the two would be lost
+preset-options-at-and-options.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.placement holds options and options_at, and a tool places its options in one of them
+preset-options-at-at-the-root.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/{key}", whose steps before {key} are a prefix of placement.each "/linters/enable" or run through it, so a binding whose key is a step of the list would replace the list
+preset-options-at-below-the-list.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/linters/enable/deeper/{key}", whose steps before {key} are a prefix of placement.each "/linters/enable" or run through it, so a binding whose key is a step of the list would replace the list
+preset-options-at-below-the-severity-table.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.placement.options_at is "/severity/rules/deeper/{key}", which is written where severity_table "/severity/rules" is, and one of the two would be lost
+preset-options-at-digit-first-of-two.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/0/settings/{key}", whose step "0" is digits, which the generator reads as a list index and not as a name, so the list would be lost
+preset-options-at-digit-root.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/0/{key}", whose step "0" is digits, which the generator reads as a list index and not as a name, so the list would be lost
+preset-options-at-digit-step.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/linters/0/{key}", whose step "0" is digits, which the generator reads as a list index and not as a name, so the list would be lost
+preset-options-at-has-no-key.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/settings/linter", and it must hold the binding's key as one step written {key}, exactly once
+preset-options-at-in-the-list.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/linters/{key}", whose steps before {key} are a prefix of placement.each "/linters/enable" or run through it, so a binding whose key is a step of the list would replace the list
+preset-options-at-in-the-severity-table.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.placement.options_at is "/severity/rules/{key}", which is written where severity_table "/severity/rules" is, and one of the two would be lost
+preset-options-at-key-twice.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/settings/{key}/{key}", and it must hold the binding's key as one step written {key}, exactly once
+preset-options-at-needs-a-list.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is set, and the shape is object, which places options on the entry: only a list has no member of its own to hold them
+preset-options-at-not-a-pointer.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "settings/{key}", which is no JSON pointer: "" or steps each starting with /, ~ written ~0 and / written ~1
+preset-options-at-over-a-line.yaml
+  adapters/lint-a/1.0.0.yaml:49: shape: preset.placement.options_at is "/version/{key}", which is written over the fixed line "version", and one of the two would be lost
+preset-options-at-through-the-list.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/linters/enable/{key}", whose steps before {key} are a prefix of placement.each "/linters/enable" or run through it, so a binding whose key is a step of the list would replace the list
+preset-options-at-u200b-after-the-key.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.placement.options_at is "/linters/settings/{key}/\u200b", which is no JSON pointer: "" or steps each starting with /, ~ written ~0 and / written ~1
+preset-options-at-with-settings.yaml
+  adapters/lint-a/1.0.0.yaml:44: shape: preset.settings is set with placement.options_at: the options of a binding are written in the generated document, and a settings input holds only the one list between its markers, so they would be dropped
+preset-path-climbs.yaml
+  adapters/lint-a/1.0.0.yaml:40: shape: preset.path is "../lint-a.yml", and it must be a path below the config set: slash-separated, no step empty, . or .., no drive
+preset-path-missing.yaml
+  adapters/lint-a/1.0.0.yaml:40: shape: preset.path is missing
+preset-pointer-u009b-a-control.yaml
+  adapters/lint-a/1.0.0.yaml:45: shape: preset.placement.each is "/rules\u009b", which is no JSON pointer: "" or steps each starting with /, ~ written ~0 and / written ~1
+preset-pointer-u200b-a-format-character.yaml
+  adapters/lint-a/1.0.0.yaml:45: shape: preset.placement.each is "/rules\u200b", which is no JSON pointer: "" or steps each starting with /, ~ written ~0 and / written ~1
+preset-pointer-u2028-a-line-separator.yaml
+  adapters/lint-a/1.0.0.yaml:45: shape: preset.placement.each is "/rules\u2028", which is no JSON pointer: "" or steps each starting with /, ~ written ~0 and / written ~1
+preset-pointer-u2029-a-paragraph-separator.yaml
+  adapters/lint-a/1.0.0.yaml:45: shape: preset.placement.each is "/rules\u2029", which is no JSON pointer: "" or steps each starting with /, ~ written ~0 and / written ~1
+preset-pointer-u202e-a-bidi-override.yaml
+  adapters/lint-a/1.0.0.yaml:45: shape: preset.placement.each is "/rules\u202e", which is no JSON pointer: "" or steps each starting with /, ~ written ~0 and / written ~1
+preset-settings-file-climbs.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.settings.file is "../settings.yml", and it must be a path below the config set: slash-separated, no step empty, . or .., no drive
+preset-settings-lacks-a-key.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.settings.end is missing
+preset-settings-markers-equal.yaml
+  adapters/lint-a/1.0.0.yaml:49: shape: preset.settings.end is the line preset.settings.begin is, and the two markers must differ
+preset-severity-item-list-needs-a-key.yaml
+  adapters/lint-a/1.0.0.yaml:48: shape: preset.placement.severity_item.key is missing
+preset-severity-item-object-takes-level-only.yaml
+  adapters/lint-a/1.0.0.yaml:49: shape: preset.placement.severity_item.key is set, and an object's member is named by the entry, so it takes level only
+preset-severity-item-without-a-table.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.placement holds severity_item and no severity_table: the item is the shape of the table's items
+preset-severity-twice.yaml
+  adapters/lint-a/1.0.0.yaml:47: shape: preset.placement holds severity and severity_table, and a tool keeps its severity in one of them
+preset-unknown-key.yaml
+  adapters/lint-a/1.0.0.yaml:43: key: preset.hook is not a field of an adapter; the fields here are path, format, comment, lines, placement, settings, wiring
+preset-wiring-empty.yaml
+  adapters/lint-a/1.0.0.yaml:46: shape: preset.wiring is empty: leave it out
+reference-alias.yaml
+  adapters/lint-a/1.0.0.yaml:27: yaml: the anchor &err lets another place stand for this value; remove it
+reference-key.yaml
+  adapters/lint-a/1.0.0.yaml:32: reference: severities.$ref refers to a value elsewhere, and an adapter writes every value out
+reference-tag.yaml
+  adapters/lint-a/1.0.0.yaml:34: yaml: the tag !include is not read here; write the value without it
+repeated-key.yaml
+  adapters/lint-a/1.0.0.yaml:7: yaml: the key extends is written again, first at line 6
+severities-default-not-a-level.yaml
+  adapters/lint-a/1.0.0.yaml:37: shape: severities.default is loud, which is no level
+unknown-key-nested.yaml
+  adapters/lint-a/1.0.0.yaml:23: key: run.output.fields.fix is not a field of an adapter; the fields here are key, message, path, line, column, severity, url
+unknown-key.yaml
+  adapters/lint-a/1.0.0.yaml:7: key: script is not a field of an adapter; the fields here are format, tool, version, tool_versions, targets, extends, config, config_loads_code, run, severities, values, docs_url, preset, resolve_from, paths, version_argv
+version-range-empty.yaml
+  adapters/lint-a/1.0.0.yaml:4: version-range: tool_versions ">=3.0.0 <2.0.0": not a version range: no version is both >=3.0.0 and <2.0.0
+warning-not-a-warning.yaml
+  adapters/lint-a/1.0.0.yaml:31: shape: severities.warning is error, which is no level that is a warning

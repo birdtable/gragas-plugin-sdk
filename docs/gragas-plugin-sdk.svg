@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="gragas-plugin-sdk">
+  <title>gragas-plugin-sdk</title>
+
+  <!--
+    The gragas feather with a plug in braces. The feather is gragas's own icon, placed as
+    in the plugins icon; the corner disc is pale with an ink rim, the plugins badge turned
+    around, and holds a small plug between code braces: a plugin is code, and the SDK is
+    the code it is written with.
+
+    Flat shapes, no gradients, the family's ink, grey and pale on a ground of its own,
+    sand, where gragas has the greylag grey and the plugins sage. At sixteen pixels the
+    ground and a light dot where the plugins icon has a dark one keep the three apart in
+    a row of tabs. Approved by the operator on 24 Nov 2026 (S2, colour C1).
+  -->
+
+  <defs>
+    <clipPath id="badge">
+      <rect x="0" y="0" width="256" height="256" rx="56" ry="56"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#badge)">
+    <rect width="256" height="256" fill="#DED2B8"/>
+    <g transform="translate(18 226)">
+    <path fill="#161A1F" d="M42 -47 C44 -86 78 -132 160 -172 Q94 -103 42 -47 Z"/>
+    <path fill="#6C7681" d="M160 -172 C150 -110 110 -60 48 -36 L42 -47 Q94 -103 160 -172 Z"/>
+    <path d="M145 -118 L127 -121 M114 -78 L98 -83 M77 -115 L88 -109" stroke="#DED2B8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M22 -24 Q32 -35 42 -47" stroke="#161A1F" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M42 -47 Q94 -103 152 -164" stroke="#F2F5F8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+    <circle cx="190" cy="190" r="40" fill="#DED2B8"/>
+    <circle cx="190" cy="190" r="31" fill="#F2F5F8" stroke="#161A1F" stroke-width="5"/>
+    <path d="M181 170 Q173 170 173 178 L173 185 Q173 190 168 190 Q173 190 173 195 L173 202 Q173 210 181 210" stroke="#161A1F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M199 170 Q207 170 207 178 L207 185 Q207 190 212 190 Q207 190 207 195 L207 202 Q207 210 199 210" stroke="#161A1F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="185" y="179" width="3.5" height="7" rx="1.2" fill="#161A1F"/>
+    <rect x="191.5" y="179" width="3.5" height="7" rx="1.2" fill="#161A1F"/>
+    <rect x="182" y="185" width="16" height="10" rx="3" fill="#161A1F"/>
+    <path d="M190 195 L190 201" stroke="#161A1F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>
